@@ -42,3 +42,5 @@ sub-fields after `+`:
   + Keywords: manually test, manual test, test scenario, pass fail, error path
 - [`./instructions/write-readme-section.agent.md`](./write-readme-section.agent.md) — write one focused README section (setup, usage, etc.) from verified project facts.
   + Keywords: README, setup instructions, usage instructions, documentation
+- [`./instructions/verify-against-real-data.agent.md`](./verify-against-real-data.agent.md) — shared rule: only treat something as done when checked against real evidence, not assumptions; flag ambiguity instead of guessing.
+  + Keywords: verify, real data, don't assume, placeholder, ambiguous

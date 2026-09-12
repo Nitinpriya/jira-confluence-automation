@@ -17,6 +17,6 @@ Workflow for manually testing a feature or flow against real inputs/fixtures and
   + One manual-test log entry per scenario with fields: Feature/Flow, Scenario, Input Used, Expected, Actual, Result (pass/fail), Notes.
   + Example checklist line: `- [x] <feature/flow> — <scenario> — expected <X>, got <Y> — pass`.
 - Constraints:
-  + Do not mark a feature as tested using only placeholder/synthetic data if real fixtures are available.
+  + See [`./verify-against-real-data.agent.md`](./verify-against-real-data.agent.md) — do not mark a feature as tested using only placeholder/synthetic data if real fixtures are available.
   + A feature is not "done" until both happy-path and relevant error-path scenarios have recorded results.
   + Failures must include enough detail (input, expected, actual) for someone else to reproduce them without re-deriving the test.
