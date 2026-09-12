@@ -44,3 +44,9 @@ sub-fields after `+`:
   + Keywords: README, setup instructions, usage instructions, documentation
 - [`./instructions/verify-against-real-data.agent.md`](./verify-against-real-data.agent.md) — shared rule: only treat something as done when checked against real evidence, not assumptions; flag ambiguity instead of guessing.
   + Keywords: verify, real data, don't assume, placeholder, ambiguous
+- [`./instructions/use-load_notes.agent.md`](./use-load_notes.agent.md) — when/how to use `tools/load_notes.py` to load a meeting notes file (txt/Markdown) and print its contents.
+  + Keywords: load notes, read notes file, notes loader
+- [`./instructions/use-load_jira_pat.agent.md`](./use-load_jira_pat.agent.md) — when/how to use `tools/load_jira_pat.py` to validate the Jira PAT from `.env` is present, without exposing its value.
+  + Keywords: jira pat, load token, validate .env, missing pat
+- [`./instructions/use-merge_candidates.agent.md`](./use-merge_candidates.agent.md) — when/how to use `tools/merge_candidates.py` to merge pattern and LLM extraction results into one tagged candidate list.
+  + Keywords: merge candidates, combine extraction results, candidate list
