@@ -36,3 +36,9 @@ sub-fields after `+`:
   + Keywords: create instruction, new instruction, skill, catalog, bootstrap instructions
 - [`./instructions/create-status-report.agent.md`](./create-status-report.agent.md) — VS Code custom subagent that writes weekly status reports (Accomplishments/Blockers/Next Week).
   + Keywords: status report, weekly update, accomplishments, blockers
+- [`./instructions/tag-extracted-items.agent.md`](./tag-extracted-items.agent.md) — attach an extraction-method tag (e.g. pattern/llm) to items pulled out by multiple extractors.
+  + Keywords: tag, extraction method, pattern, llm, extractor
+- [`./instructions/manually-test-feature.agent.md`](./manually-test-feature.agent.md) — manually test a feature/flow against real fixtures and log pass/fail results per scenario.
+  + Keywords: manually test, manual test, test scenario, pass fail, error path
+- [`./instructions/write-readme-section.agent.md`](./write-readme-section.agent.md) — write one focused README section (setup, usage, etc.) from verified project facts.
+  + Keywords: README, setup instructions, usage instructions, documentation
