@@ -1,5 +1,5 @@
 #requires -Version 5.1
-# Minimal MCP stdio server exposing "echo", "reverse", and "uppercase" tools.
+# Minimal MCP stdio server exposing "echo", "reverse", "uppercase", "get_time", and "calculate" tools.
 $ErrorActionPreference = 'Stop'
 
 $outStream = [Console]::OpenStandardOutput()
@@ -45,6 +45,27 @@ $tools = @(
                 text = @{ type = "string"; description = "Text to uppercase." }
             }
             required   = @("text")
+        }
+    },
+    @{
+        name        = "get_time"
+        description = "Returns the current local date and time."
+        inputSchema = @{
+            type       = "object"
+            properties = @{}
+        }
+    },
+    @{
+        name        = "calculate"
+        description = "Performs a basic arithmetic operation (+, -, *, /) on two numbers."
+        inputSchema = @{
+            type       = "object"
+            properties = @{
+                a         = @{ type = "number"; description = "First operand." }
+                b         = @{ type = "number"; description = "Second operand." }
+                operator  = @{ type = "string"; description = "One of +, -, *, /." }
+            }
+            required   = @("a", "b", "operator")
         }
     }
 )
@@ -118,6 +139,52 @@ while ($true) {
                         result  = @{
                             content = @(@{ type = "text"; text = $text.ToUpperInvariant() })
                             isError = $false
+                        }
+                    }
+                }
+                "get_time" {
+                    Send-Response @{
+                        jsonrpc = "2.0"
+                        id      = $id
+                        result  = @{
+                            content = @(@{ type = "text"; text = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss") })
+                            isError = $false
+                        }
+                    }
+                }
+                "calculate" {
+                    $a = [double]$toolArgs.a
+                    $b = [double]$toolArgs.b
+                    $op = [string]$toolArgs.operator
+                    $errorMsg = $null
+                    $calcResult = $null
+                    switch ($op) {
+                        "+" { $calcResult = $a + $b }
+                        "-" { $calcResult = $a - $b }
+                        "*" { $calcResult = $a * $b }
+                        "/" {
+                            if ($b -eq 0) { $errorMsg = "Division by zero." }
+                            else { $calcResult = $a / $b }
+                        }
+                        default { $errorMsg = "Unsupported operator: $op" }
+                    }
+                    if ($errorMsg) {
+                        Send-Response @{
+                            jsonrpc = "2.0"
+                            id      = $id
+                            result  = @{
+                                content = @(@{ type = "text"; text = $errorMsg })
+                                isError = $true
+                            }
+                        }
+                    } else {
+                        Send-Response @{
+                            jsonrpc = "2.0"
+                            id      = $id
+                            result  = @{
+                                content = @(@{ type = "text"; text = [string]$calcResult })
+                                isError = $false
+                            }
                         }
                     }
                 }
