@@ -50,3 +50,5 @@ sub-fields after `+`:
   + Keywords: jira pat, load token, validate .env, missing pat
 - [`./instructions/use-merge_candidates.agent.md`](./use-merge_candidates.agent.md) — when/how to use `tools/merge_candidates.py` to merge pattern and LLM extraction results into one tagged candidate list.
   + Keywords: merge candidates, combine extraction results, candidate list
+- [`./instructions/validate-markdown.agent.md`](./validate-markdown.agent.md) — when/how to use `scripts/validate_markdown.py` to check all Markdown files in the repo for consistent formatting (single H1, resolvable relative links).
+  + Keywords: validate markdown, check markdown formatting, markdown consistency, broken links

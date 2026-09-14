@@ -12,6 +12,8 @@ project_spec.md
 8e1efa2 (HEAD -> master) Add meeting notes processor technical specification
 
 ## project_spec.md Contents
+
+```markdown
 # Technical Specification: Meeting Notes Processor (Action Items → Jira Tickets)
 
 ## 1. Overview
@@ -108,3 +110,4 @@ Assignee, due date, and source-note linking are **out of scope for v1** (not sel
 
 - **Choose/confirm the LLM provider and API access method for the fallback extraction stage**
   - *Suggestion:* Reuse whatever LLM access your organization already has approved (e.g., GitHub Copilot/Azure OpenAI via EPAM-provided endpoints) rather than introducing a new vendor/API key, to avoid extra procurement/security review. Keep the fallback call isolated behind a single function so the provider can be swapped later with minimal changes.
+```

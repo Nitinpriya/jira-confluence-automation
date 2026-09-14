@@ -13,6 +13,8 @@ project_spec.md
 21125e0 (HEAD -> master) Add implementation backlog
 
 ## backlog.md Contents
+
+```markdown
 # Implementation Backlog: Meeting Notes Processor (Action Items → Jira Tickets)
 
 Derived from [project_spec.md](./project_spec.md). Scope decisions for v1:
@@ -68,3 +70,4 @@ Derived from [project_spec.md](./project_spec.md). Scope decisions for v1:
 - [ ] Write README setup instructions (environment setup, `.env`/PAT configuration, dependency install)
 - [ ] Write README usage instructions (how to run the tool, CLI review flow walkthrough)
 - [ ] Document known v1 limitations/out-of-scope items (no duplicate detection, no assignee/due-date parsing, no source-note linking, no transcript tool integration)
+```
