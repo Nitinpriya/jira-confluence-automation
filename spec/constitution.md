@@ -55,6 +55,17 @@ explicit amendment to this constitution.
   calls; use parameterized queries exclusively (no raw string-concatenated SQL).
 - **Transport security:** All calls to Jira/Confluence APIs must use HTTPS; no
   plaintext credential transmission.
+- **Encryption at rest:** No secrets (PATs, API keys) are ever persisted to
+  PostgreSQL — they are read from environment variables at request time only.
+  If any future column must store sensitive data, it must be encrypted with
+  **AES-256-GCM** via Node's built-in `crypto` module, with the key supplied
+  via an environment variable and never stored in the database or source
+  control.
+- **CORS:** The backend must restrict cross-origin requests to the configured
+  frontend origin only (`FRONTEND_ORIGIN` env var); wildcard CORS is
+  prohibited.
+- **API versioning:** All REST routes are prefixed with `/api/v1` to allow
+  non-breaking future changes.
 
 ## 6. Quality Principles
 

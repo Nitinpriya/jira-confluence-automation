@@ -9,6 +9,15 @@ Confluence.
 
 This specification expands on [`constitution.md`](./constitution.md) and must
 stay consistent with its fixed tech stack, security, and quality principles.
+All open questions raised during review are resolved in
+[`clarify.md`](./clarify.md) and incorporated below.
+
+## 1a. Authentication (resolved in clarify.md GAP-03)
+
+- Single shared team login (username/password, `bcrypt`-hashed in Postgres).
+- All `/api/v1/*` routes require an authenticated session except
+  `/api/v1/health`.
+- Full SSO / per-user roles are out of scope for this prototype.
 
 ## 2. Target User & Problem
 
@@ -61,25 +70,63 @@ stay consistent with its fixed tech stack, security, and quality principles.
 
 ## 5. API Endpoints
 
-All endpoints are served by the Express backend under `/api`.
+All endpoints are served by the Express backend under `/api/v1` (see
+GAP-08). CORS is restricted to the `FRONTEND_ORIGIN` env var (GAP-07). All
+routes except `/api/v1/health` and `/api/v1/auth/login` require an
+authenticated session (GAP-03).
 
 | Method | Path | Request Body | Response | Purpose |
 |---|---|---|---|---|
-| `POST` | `/api/notes/extract` | `{ notesText: string }` | `{ candidates: CandidateItem[] }` | Run pattern + LLM-fallback extraction on submitted notes |
-| `GET` | `/api/notes/:noteId/candidates` | — | `{ candidates: CandidateItem[] }` | Retrieve previously extracted candidates for a stored note |
-| `PATCH` | `/api/candidates/:id` | `{ summary?: string, status?: 'approved'|'removed' }` | `{ candidate: CandidateItem }` | Edit or set review decision on one candidate |
-| `POST` | `/api/tickets` | `{ candidateIds: string[] }` | `{ results: TicketResult[] }` | Create Jira tickets for approved candidates; per-item success/failure |
-| `POST` | `/api/confluence/pages` | `{ noteId: string, title: string, bodyHtml: string }` | `{ page: ConfluencePageResult }` | Publish a Confluence page from the reviewed draft |
-| `GET` | `/api/health` | — | `{ status: 'ok' }` | Health check for Docker/orchestration |
+| `POST` | `/api/v1/auth/login` | `{ username: string, password: string }` | `{ ok: true }` (sets session cookie) | Authenticate the shared team login |
+| `POST` | `/api/v1/notes/extract` | `{ notesText: string }` | `{ candidates: CandidateItem[] }` | Run pattern + LLM-fallback extraction on submitted notes |
+| `GET` | `/api/v1/notes/:noteId/candidates` | — | `{ candidates: CandidateItem[] }` | Retrieve previously extracted candidates for a stored note |
+| `PATCH` | `/api/v1/candidates/:id` | `{ summary?: string, status?: 'approved'|'removed' }` | `{ candidate: CandidateItem }` | Edit or set review decision on one candidate |
+| `POST` | `/api/v1/tickets` | `{ candidateIds: string[] }` | `207 Multi-Status`: `{ results: TicketResult[] }` | Create Jira tickets for approved candidates; per-item success/failure |
+| `POST` | `/api/v1/confluence/pages` | `{ noteId: string, title: string, bodyHtml: string, spaceKey?: string, parentPageId?: string }` | `{ page: ConfluencePageResult }` | Publish a Confluence page from the reviewed draft (defaults `spaceKey` to `CONFLUENCE_SPACE_KEY` env var, GAP-01) |
+| `GET` | `/api/v1/health` | — | `{ status: 'ok' }` | Health check for Docker/orchestration (no auth required) |
+
+### Response Shapes (resolved in clarify.md GAP-02)
+
+```ts
+type TicketResult = {
+  actionItemId: string;
+  status: 'success' | 'failed';
+  jiraKey?: string;        // present when status === 'success'
+  errorMessage?: string;   // present when status === 'failed'
+};
+
+type ConfluencePageResult = {
+  status: 'success' | 'failed';
+  pageId?: string;
+  pageUrl?: string;
+  errorMessage?: string;
+};
+```
+
+`POST /api/v1/tickets` returns HTTP `207 Multi-Status` whenever the batch
+contains a mix of successes and failures, `201 Created` when all succeed, and
+`422 Unprocessable Entity` when all fail.
 
 ## 6. Data Model (PostgreSQL)
 
 ```sql
+-- Required once per database (resolved in clarify.md GAP-06)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Shared team login credential (resolved in clarify.md GAP-03)
+CREATE TABLE users (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username      TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,      -- bcrypt hash, never plaintext
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- One uploaded/pasted meeting notes submission
 CREATE TABLE notes (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  raw_text     TEXT NOT NULL,
-  created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+  raw_text     TEXT NOT NULL CHECK (char_length(raw_text) <= 50000),
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Candidate action items extracted from a note
@@ -122,9 +169,12 @@ CREATE TABLE confluence_pages (
 - Automatic (non-reviewed) ticket/page creation.
 - Direct integration with transcript/meeting tools (Zoom, Teams).
 - Assignee/due-date inference for Jira tickets.
+- Full SSO / per-user roles and permissions (GAP-03).
+- Rate limiting on write endpoints (GAP-09).
+- Structured observability/monitoring beyond console error logging (GAP-10).
+- Pagination on list endpoints (GAP-12).
 
-## 8. Open Questions
+## 8. Resolved Questions
 
-- Exact Confluence space/parent page to publish under — needs confirmation.
-- Whether Jira ticket type should be configurable per submission or fixed
-  (currently assumed fixed, per constitution's single-project convention).
+See [`clarify.md`](./clarify.md) for the full gap analysis and resolutions
+(GAP-01 through GAP-12), all of which are reflected in the sections above.
