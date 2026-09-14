@@ -1,3 +1,7 @@
+# Module 13 Completion Report
+
+## MCP Configuration
+```json
 {
   "inputs": [
     { "id": "jiraUrl", "type": "promptString", "description": "Jira base URL (e.g. https://your-company.atlassian.net)" },
@@ -11,10 +15,6 @@
     "echo-windows": {
       "command": "powershell",
       "args": ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/.vscode/mcp-echo.ps1"]
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
     },
     "mcp-atlassian": {
       "command": "uvx",
@@ -30,3 +30,17 @@
     }
   }
 }
+```
+
+Note: no real API keys/tokens are stored in this file — Jira/Confluence credentials are collected at server-start time via the `inputs` prompts (token fields marked `password: true`), so there was nothing to redact.
+
+## Configured Servers
+- echo-windows
+- mcp-atlassian
+
+## MCP Tool Test
+- Tool used: `mcp_echo-windows_echo` (the `echo` tool on the `echo-windows` server)
+- Output:
+```
+Module 13 MCP tool test - hello-genai workspace
+```
