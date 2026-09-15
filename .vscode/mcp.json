@@ -16,6 +16,10 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/"
     },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
     "mcp-atlassian": {
       "command": "uvx",
       "args": ["mcp-atlassian"],
